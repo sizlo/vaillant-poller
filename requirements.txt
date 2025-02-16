@@ -1,0 +1,2 @@
+myPyllant == 0.9.0
+jsonpickle == 4.0.1
