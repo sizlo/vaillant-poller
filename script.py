@@ -4,6 +4,7 @@ import time
 
 from fetcher import Fetcher
 from local_persistor import LocalPersistor
+from metrics_pusher import MetricsPusher
 from state_builder import StateBuilder
 from log import log
 from env import require_env
@@ -18,6 +19,7 @@ def main():
             system, data = Fetcher(now).fetch()
             state = StateBuilder(now).build(system)
             LocalPersistor(now).persist(system, state)
+            MetricsPusher().push(state)
         except:
             traceback.print_exc()
         finally:
