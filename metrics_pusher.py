@@ -81,4 +81,4 @@ def get_consumption_metric(consumption):
     if consumption.start_date > datetime.datetime.now(pytz.timezone("Europe/London")):
         return ""
     start_date_nano_ts = int(consumption.start_date.timestamp() * 1000000000)
-    return f"{consumption.energy_type},source=vaillant-poller-new,operation_mode={consumption.operation_mode} value={consumption.value} {start_date_nano_ts}\n"
+    return f"{consumption.energy_type},source=vaillant-poller,operation_mode={consumption.operation_mode} value={consumption.value} {start_date_nano_ts}\n"
