@@ -2,7 +2,6 @@ import datetime
 import traceback
 import time
 
-from consumption_builder import ConsumptionBuilder
 from fetcher import Fetcher
 from local_persistor import LocalPersistor
 from metrics_pusher import MetricsPusher
@@ -17,11 +16,10 @@ def main():
     while True:
         try:
             now = datetime.datetime.now()
-            system, data = Fetcher(now).fetch()
+            system = Fetcher().fetch()
             state = StateBuilder(now).build(system)
-            consumptions = ConsumptionBuilder().build(data)
             LocalPersistor(now).persist(system, state)
-            MetricsPusher().push(state, consumptions)
+            MetricsPusher().push(state)
         except:
             traceback.print_exc()
         finally:

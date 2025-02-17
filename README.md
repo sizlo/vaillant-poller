@@ -1,6 +1,6 @@
 # vaillant-poller
 
-Script to poll the Vaillant API, fetch heating system state and energy usage, persist the data to local files and push to a metrics server.
+Script to poll the Vaillant API, fetch heating system state, persist the data to local files and push to a metrics server.
 
 ## Install dependencies
 
