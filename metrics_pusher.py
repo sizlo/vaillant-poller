@@ -47,7 +47,7 @@ def build_body(state):
     body += get_numeric_metric(state, "dhw_maximum_loading_time")
     body += get_enum_metric(state, "energy_manager_state", [e.value for e in CircuitState])
     body += get_enum_metric(state, "operation_mode_heating", [e.value for e in ZoneOperatingMode])
-    body += get_enum_metric(state, "operation_mode_heating", [e.value for e in DHWOperationMode])
+    body += get_enum_metric(state, "operation_mode_dhw", [e.value for e in DHWOperationMode])
     body += get_enum_metric(state, "current_special_function", [e.value for e in DHWCurrentSpecialFunction])
     return body
 
