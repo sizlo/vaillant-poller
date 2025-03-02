@@ -2,3 +2,4 @@
 local-storage/
 .venv
 .idea/
+__pycache__
