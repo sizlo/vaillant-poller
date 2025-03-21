@@ -15,7 +15,8 @@ class MissingConsumptionDaysGetter:
         consumption_days = []
         today = self.now.date()
 
-        for offset in range(1, self.lookback_days):
+        # Start from 2 days ago, because yesterday's data might not be ready when this runs just after midnight
+        for offset in range(2, self.lookback_days):
             day = today - datetime.timedelta(days=offset)
 
             if not self.local_persistor.consumption_day_file_exists(day):
