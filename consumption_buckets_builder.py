@@ -10,8 +10,8 @@ class ConsumptionBucketsBuilder:
         return list(self.consumption_buckets.values())
 
     def _add_or_append_to_consumption_bucket(self, device_data, datapoint):
-        start_str = datapoint.start_date.strftime("%Y-%m-%dT%H:%M")
-        end_str = datapoint.end_date.strftime("%Y-%m-%dT%H:%M")
+        start_str = datapoint.start_date.isoformat()
+        end_str = datapoint.end_date.isoformat()
         bucket_id = f"{start_str} - {end_str}"
 
         if bucket_id not in self.consumption_buckets.keys():
