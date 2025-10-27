@@ -3,10 +3,14 @@ import datetime
 import sys
 import traceback
 
+from cachetools import TTLCache
+from myPyllant.api import MyPyllantAPI
+
 from env import require_env
 from log import log
-from myPyllant.api import MyPyllantAPI
 from myPyllant.enums import DeviceDataBucketResolution
+
+TWENTY_FOUR_HOURS_IN_SECONDS = 60 * 60 * 24
 
 
 class Fetcher:
@@ -15,14 +19,16 @@ class Fetcher:
         self.password = require_env("VAILLANT_PASSWORD")
         self.brand = "vaillant"
         self.country = "unitedkingdom"
+        self.home_cache = TTLCache(maxsize=1, ttl=TWENTY_FOUR_HOURS_IN_SECONDS)
 
     def fetch_system(self):
         return asyncio.run(self._fetch_system())
 
     async def _fetch_system(self):
         async with MyPyllantAPI(self.user, self.password, self.brand, self.country) as api:
+            home = await self._fetch_home(api)
             log("Fetching system from API")
-            async for system in api.get_systems():
+            async for system in api.get_systems(homes=[home]):
                 # This assumes there is only one system on the account
                 return system
 
@@ -47,3 +53,13 @@ class Fetcher:
                 traceback.print_exc()
                 device_datas = []
             return device_datas
+
+    async def _fetch_home(self, api):
+        if "home" in self.home_cache.keys():
+            return self.home_cache["home"]
+
+        log("Fetching home from API")
+        async for home in api.get_homes():
+            # This assumes there is only one home on the account
+            self.home_cache["home"] = home
+            return home

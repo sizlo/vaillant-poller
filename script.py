@@ -17,10 +17,10 @@ poll_delay = int(require_env("VAILLANT_POLL_DELAY_SECONDS"))
 
 def main():
     metrics_server = MetricsServer()
+    fetcher = Fetcher()
     while True:
         try:
             now = datetime.datetime.now()
-            fetcher = Fetcher()
             state_builder = StateBuilder(now)
             consumption_buckets_builder = ConsumptionBucketsBuilder()
             local_persistor = LocalPersistor(now)
