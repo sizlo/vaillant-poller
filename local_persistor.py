@@ -3,6 +3,7 @@ import csv
 import jsonpickle
 import glob
 import errno
+import shutil
 
 
 from env import require_env
@@ -54,11 +55,13 @@ class LocalPersistor:
                 writer.writerow(bucket)
 
     def _purge_old_system_dumps(self):
-        all_dumps = glob.glob(os.path.join(self.path, "system_dumps", "daily", "*.json"))
+        daily_dumps_path = os.path.join(self.path, "system_dumps", "daily")
+        all_dumps = glob.glob(os.path.join(daily_dumps_path, "**", "*.json"), recursive=True)
         oldest_dumps = sorted(all_dumps, reverse=True)[self.num_daily_system_dumps_to_keep:]
         for dump in oldest_dumps:
             log(f"Deleting old system dump {dump}")
             os.remove(dump)
+        _purge_directories_with_no_subdirectories_and_no_files_with_extension(daily_dumps_path, ".json")
 
     def _get_consumption_day_file_path(self, day):
         return os.path.join(self.path, "consumption", day.strftime("%Y"), day.strftime("%m"), f"consumption_{day.strftime('%Y-%m-%d')}.csv")
@@ -95,3 +98,31 @@ def _ensure_dirs_exist(filepath):
     except OSError as exception:
         if exception.errno != errno.EEXIST:
             raise
+
+
+def _purge_directories_with_no_subdirectories_and_no_files_with_extension(root, file_extension):
+    did_delete = False
+
+    all_paths = glob.glob(os.path.join(root, "**"), recursive=True)
+    for path in all_paths:
+        if not os.path.isdir(path):
+            continue
+
+        if _delete_directory_if_it_has_no_subdirectories_and_no_files_with_extension(path, file_extension):
+            did_delete = True
+
+    # Recurse if we deleted, as this may have made a parent directory eligible for purging
+    if did_delete:
+        _purge_directories_with_no_subdirectories_and_no_files_with_extension(root, file_extension)
+
+
+def _delete_directory_if_it_has_no_subdirectories_and_no_files_with_extension(path, file_extension):
+    immediate_children = glob.glob(os.path.join(path, "*"))
+    for child in immediate_children:
+        if os.path.isdir(child):
+            return False
+        if child.endswith(file_extension):
+            return False
+    log(f"Purging directory as it no longer contains any {file_extension} files, or subdirectories: {path}")
+    shutil.rmtree(path)
+    return True
