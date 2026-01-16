@@ -26,7 +26,7 @@ class LocalPersistor:
         return os.path.isfile(self._get_consumption_day_file_path(day))
 
     def _persist_state(self, state):
-        filepath = os.path.join(self.path, "state_samples", f"vaillant_state_{self.now.strftime('%Y-%m')}.csv")
+        filepath = os.path.join(self.path, "state_samples", self.now.strftime("%Y"), f"vaillant_state_{self.now.strftime('%Y-%m')}.csv")
         if os.path.isfile(filepath):
             _append_csv(filepath, state)
         else:
@@ -34,8 +34,8 @@ class LocalPersistor:
 
     def _persist_system(self, system):
         system_json = jsonpickle.encode(system)
-        daily_filepath = os.path.join(self.path, "system_dumps", "daily", f"vaillant_system_{self.now.strftime('%Y-%m-%d')}.json")
-        monthly_filepath = os.path.join(self.path, "system_dumps", "monthly", f"vaillant_system_{self.now.strftime('%Y-%m')}.json")
+        daily_filepath = os.path.join(self.path, "system_dumps", "daily", self.now.strftime("%Y"), self.now.strftime("%m"), f"vaillant_system_{self.now.strftime('%Y-%m-%d')}.json")
+        monthly_filepath = os.path.join(self.path, "system_dumps", "monthly", self.now.strftime("%Y"), f"vaillant_system_{self.now.strftime('%Y-%m')}.json")
         _dump_system_to_file(daily_filepath, system_json)
         _dump_system_to_file(monthly_filepath, system_json)
 
