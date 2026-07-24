@@ -16,7 +16,7 @@ class StateBuilder:
         self._add_value("current_dhw_temperature", lambda: system.domestic_hot_water[0].current_dhw_temperature)
         self._add_value("water_pressure", lambda: system.water_pressure)
         self._add_value("current_circuit_flow_temperature", lambda: system.circuits[0].current_circuit_flow_temperature)
-        self._add_value("heating_circuit_flow_setpoint", lambda: system.circuits[0].extra_fields["heating_circuit_flow_setpoint"])
+        self._add_value("heating_circuit_flow_setpoint", lambda: system.circuits[0].heating_circuit_flow_setpoint)
         self._add_value("energy_manager_state", lambda: system.state["system"]["energy_manager_state"])
         self._add_value("operation_mode_heating", lambda: system.zones[0].heating.operation_mode_heating)
         self._add_value("desired_room_temperature_setpoint_heating", lambda: system.zones[0].desired_room_temperature_setpoint_heating)
